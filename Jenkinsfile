@@ -8,14 +8,16 @@ pipeline {
         pollSCM '* * * * *'
     }
     stages {
-        steps('ENV') {
-             // Установка Flutter SDK
+        stage('ENV') {
+            steps {
                 sh '''
                     wget https://storage.googleapis.com/flutter_infra/releases/${FLUTTER_CHANNEL}/linux/flutter_linux_${FLUTTER_VERSION}-${FLUTTER_CHANNEL}.tar.xz
                     tar xf flutter_linux_${FLUTTER_VERSION}-${FLUTTER_CHANNEL}.tar.xz
                     export PATH="$PATH:`pwd`/flutter/bin"
                     flutter doctor -v
                 '''
+               }
+            
         }
 
         stage('Build') {
