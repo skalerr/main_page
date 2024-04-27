@@ -20,15 +20,6 @@ pipeline {
             
         }
 
-        stage('Build') {
-            steps {
-                echo "Building.."
-                sh '''
-                cd myapp
-                pip install -r requirements.txt
-                '''
-            }
-        }
         stage('Build for Web') {
             steps {
                 sh 'flutter pub get'
