@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:main_page/controllers/links_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'card_item.dart';
 
 class CardGrid extends StatelessWidget {
+  CardGrid({super.key});
+
+  final LinksController controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -12,15 +21,20 @@ class CardGrid extends StatelessWidget {
             crossAxisCount: _calculateCrossAxisCount(context),
           ),
           itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CardItem(
-                title: 'Карточка ${index + 1}',
-                subtitle: 'Описание карточки ${index + 1}',
+            final item = controller.links[index];
+            return GestureDetector(
+              onTap: () => _launchURL(item.link),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: CardItem(
+                  icon: item.icon,
+                  title: item.name,
+                  subtitle: item.link,
+                ),
               ),
             );
           },
-          itemCount: 9,
+          itemCount: controller.links.length,
         ),
       ),
     );
@@ -31,47 +45,14 @@ class CardGrid extends StatelessWidget {
     int crossAxisCount = (screenWidth / 200).floor();
     return crossAxisCount > 1 ? crossAxisCount : 1;
   }
-}
 
-class CardItem extends StatelessWidget {
-  final String title;
-  final String subtitle;
-
-  const CardItem({Key? key, required this.title, required this.subtitle})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4.0,
-      margin: EdgeInsets.all(8.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Container(
-        width: 120.0,
-        height: 120.0,
-        padding: EdgeInsets.all(12.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(Icons.card_giftcard, size: 32.0),
-            SizedBox(height: 8.0),
-            Text(
-              title,
-              style: TextStyle(fontSize: 16.0),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 4.0),
-            Text(
-              subtitle,
-              style: TextStyle(fontSize: 14.0),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
+  // Функция для открытия ссылки
+  void _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Невозможно открыть ссылку: $url';
+    }
   }
 }
