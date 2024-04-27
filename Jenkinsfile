@@ -7,6 +7,11 @@ pipeline {
     triggers {
         pollSCM '* * * * *'
     }
+    environment {
+        FLUTTER_CHANNEL = 'stable' // Выбор канала Flutter (stable, beta, dev)
+        FLUTTER_VERSION = '2.10.0' // Версия Flutter
+        DOCKER_VERSION = '20.10.9' // Версия Docker
+    }
     stages {
         stage('ENV') {
             steps {
